@@ -20,3 +20,15 @@ names_schema = t.StructType([
     t.StructField("primaryProfession", t.StringType(), nullable=True),
     t.StructField("knownForTitles", t.StringType(), nullable=True),
 ])
+
+title_basics_schema = t.StructType([
+    t.StructField("tconst", t.StringType(), nullable=True),
+    t.StructField("titleType", t.StringType(), nullable=True),
+    t.StructField("primaryTitle", t.StringType(), nullable=True),
+    t.StructField("originalTitle", t.StringType(), nullable=True),
+    t.StructField("isAdult", t.StringType(), nullable=True),
+    t.StructField("startYear", t.IntegerType(), nullable=True),
+    t.StructField("endYear", t.IntegerType(), nullable=True),
+    t.StructField("runtimeMinutes", t.IntegerType(), nullable=True),
+    t.StructField("genres", t.StringType(), nullable=True),
+])
