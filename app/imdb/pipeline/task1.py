@@ -4,7 +4,7 @@ import app.imdb.pipeline.columns as c
 import pyspark.sql.functions as f
 import pyspark.sql.types as t
 
-from app.imdb.pipeline.functions import apply_func
+from app.imdb.pipeline.functions import apply_with_columns_func
 from app.imdb.pipeline.schemas import title_akas_schema
 
 
@@ -13,7 +13,7 @@ def task1():
     # path = "resources/title.akas.tsv.gz"
     df = load(path, schema=title_akas_schema)
     df.printSchema()
-    df = apply_func(df, df.columns, lambda cl: f.when(f.col(cl) == "\\N", None).otherwise(f.col(cl)))
+    df = apply_with_columns_func(df, df.columns, lambda cl: f.when(f.col(cl) == "\\N", None).otherwise(f.col(cl)))
     df.show()
     # nulls_df = df.select(f.count(f.when(f.col(c.ta_title).isNull(), 1)),
     #                      f.count(f.when(f.col(c.ta_region).isNull(), 1)),
