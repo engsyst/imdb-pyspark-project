@@ -50,3 +50,6 @@ tp_characters = "characters"
 tr_tconst = "tconst"
 tr_averageRating = "averageRating"
 tr_numVotes = "numVotes"
+
+# task necessary
+adult_per_region = "adult_per_region"

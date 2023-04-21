@@ -1,9 +1,15 @@
 from imdb.ioutil import load
 from imdb.pipeline.task1 import task1
+from imdb.pipeline.task2 import task2
+from imdb.pipeline.task3 import task3
+from imdb.pipeline.task4 import task4
 
 
 def main():
-    task1()
+    task1().show()
+    task2().show()
+    task3().show()
+    task4().show()
 
 
 def show_all():

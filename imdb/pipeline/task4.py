@@ -65,7 +65,7 @@ def load_titles(limit):
     df = apply_with_columns_func(df, df.columns,
                                  lambda cl: f.when(f.col(cl) == "\\N", None)
                                  .otherwise(f.col(cl)))
-    df = apply_with_columns_func(df, [c.tb_startYear, c.tb_endYear, c.tb_runtimeMinutes],
+    df = apply_with_columns_func(df, [c.tb_isAdult, c.tb_startYear, c.tb_endYear, c.tb_runtimeMinutes],
                                  lambda cl: f.col(cl)
                                  .cast(t.IntegerType()))
     df.printSchema()
