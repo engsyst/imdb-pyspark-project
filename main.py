@@ -1,5 +1,5 @@
-from app.imdb.ioutil import load
-from app.imdb.pipeline.task1 import task1
+from imdb.ioutil import load
+from imdb.pipeline.task1 import task1
 
 
 def main():
