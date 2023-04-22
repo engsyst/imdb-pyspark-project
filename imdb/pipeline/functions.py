@@ -1,28 +1,12 @@
-from pyspark.sql import DataFrame, functions as f
-from pyspark.sql.types import DataType
+from pyspark.pandas import DataFrame
+from pyspark.sql import DataFrame, functions as f, types as t
 
-from imdb.ioutil import eprint
 from imdb.pipeline import columns as c
 
 
 def apply_with_columns_func(df: DataFrame, columns, func):
     action_map = {column: func(column) for column in columns}
     return df.withColumns(action_map)
-
-
-def test_data_complaince(df: DataFrame, col_name: str, column_type: DataType, null_value, show_details=False):
-    # print("Check data complaince")
-    test_df = (df.filter((f.col(col_name) != null_value) &
-                         f.col(col_name).cast(column_type).isNull()))
-    # print("filter is applied")
-    if not test_df.isEmpty():
-        eprint("Found wrong rows")
-        if show_details:
-            eprint(f"Wrong rows count: {test_df.count()}")
-            eprint("Wrong rows: ")
-            test_df.orderBy(f.col(col_name)).show()
-        return False
-    return True
 
 
 def count_nulls(df, *col_names):
@@ -33,3 +17,33 @@ def count_nulls(df, *col_names):
                          f.count(f.when(f.col(c.ta_attributes).isNull(), 1)),
                          f.count(f.when(f.col(c.ta_isOriginalTitle).isNull(), 1))
                          )
+
+
+def clean_title_akas(df: DataFrame):
+    df = apply_with_columns_func(df, df.columns, lambda cl: f.when(f.col(cl) == "\\N", None)
+                                 .otherwise(f.col(cl)))
+    return df
+
+
+def clean_name_basics(df: DataFrame):
+    # Apply correct schema
+    df = apply_with_columns_func(df, df.columns, lambda cl: f.when(f.col(cl) == "\\N", None).otherwise(f.col(cl)))
+    return df
+
+
+def clean_title_basics(df: DataFrame):
+    # Apply correct schema
+    df = apply_with_columns_func(df, df.columns, lambda cl: f.when(f.col(cl) == "\\N", None).otherwise(f.col(cl)))
+    df = apply_with_columns_func(df, [c.tb_runtimeMinutes], lambda cl: f.col(cl).cast(t.IntegerType()))
+    return df
+
+
+def clean_title_principals(df: DataFrame):
+    # Apply correct schema
+    df = apply_with_columns_func(df, df.columns,
+                                 lambda cl: f.when(f.col(cl) == "\\N", None)
+                                 .otherwise(f.col(cl)))
+    df = apply_with_columns_func(df, [c.tp_ordering],
+                                 lambda cl: f.col(cl)
+                                 .cast(t.IntegerType()))
+    return df
