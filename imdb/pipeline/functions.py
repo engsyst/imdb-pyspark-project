@@ -1,4 +1,3 @@
-from pyspark.pandas import DataFrame
 from pyspark.sql import DataFrame, functions as f, types as t
 
 from imdb.pipeline import columns as c
@@ -19,15 +18,15 @@ def count_nulls(df, *col_names):
                          )
 
 
-def clean_title_akas(df: DataFrame):
-    df = apply_with_columns_func(df, df.columns, lambda cl: f.when(f.col(cl) == "\\N", None)
-                                 .otherwise(f.col(cl)))
-    return df
-
-
 def clean_name_basics(df: DataFrame):
     # Apply correct schema
     df = apply_with_columns_func(df, df.columns, lambda cl: f.when(f.col(cl) == "\\N", None).otherwise(f.col(cl)))
+    return df
+
+
+def clean_title_akas(df: DataFrame):
+    df = apply_with_columns_func(df, df.columns, lambda cl: f.when(f.col(cl) == "\\N", None)
+                                 .otherwise(f.col(cl)))
     return df
 
 
