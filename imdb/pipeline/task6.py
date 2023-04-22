@@ -10,7 +10,7 @@ from imdb.pipeline.functions import clean_title_basics, clean_title_akas, clean_
 from imdb.pipeline.schemas import title_basics_schema, title_akas_schema, title_episode_schema
 
 
-def task5(title_basics_path="resources/title.basics.tsv.gz",
+def task6(title_basics_path="resources/title.basics.tsv.gz",
           title_episode_path="resources/title.episode.tsv.gz",
           limit=None):
     basics_df = load_title_basics(title_basics_path, limit)
