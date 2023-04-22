@@ -34,7 +34,7 @@ def load_names(path, limit):
 
 
 def load_principals(path, limit):
-    df = load(path, schema=names_schema, limit=limit)  # )
+    df = load(path, limit=limit)  # )  # , schema=principals_schema
     df = clean_title_principals(df)
     # df.printSchema()
     # df.show(truncate=False)

@@ -33,11 +33,11 @@ def clean_title_akas(df: DataFrame):
 def clean_title_basics(df: DataFrame):
     # Apply correct schema
     df = apply_with_columns_func(df, df.columns, lambda cl: f.when(f.col(cl) == "\\N", None).otherwise(f.col(cl)))
-    df = apply_with_columns_func(df, [c.tb_runtimeMinutes], lambda cl: f.col(cl).cast(t.IntegerType()))
+    # df = apply_with_columns_func(df, [c.tb_runtimeMinutes], lambda cl: f.col(cl).cast(t.IntegerType()))
     return df
 
 
-def clean_title_principals(df: DataFrame):
+def clean_title_principals(df: DataFrame):     # TODO Create schema
     # Apply correct schema
     df = apply_with_columns_func(df, df.columns,
                                  lambda cl: f.when(f.col(cl) == "\\N", None)
@@ -45,4 +45,12 @@ def clean_title_principals(df: DataFrame):
     df = apply_with_columns_func(df, [c.tp_ordering],
                                  lambda cl: f.col(cl)
                                  .cast(t.IntegerType()))
+    return df
+
+
+def clean_title_episode(df: DataFrame):
+    # Apply correct schema
+    df = apply_with_columns_func(df, df.columns,
+                                 lambda cl: f.when(f.col(cl) == "\\N", None)
+                                 .otherwise(f.col(cl)))
     return df

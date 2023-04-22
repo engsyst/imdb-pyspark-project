@@ -17,7 +17,7 @@ from imdb.pipeline.schemas import title_akas_schema, title_basics_schema
 
 def task5(title_akas_path="resources/title.akas.tsv.gz",
           title_bacis_path="resources/title.basics.tsv.gz", limit=None):
-    akas_df = load_akas(title_akas_path, limit)
+    akas_df = load_title_akas(title_akas_path, limit)
     titles_df = load_title_basics(title_bacis_path, limit)
 
     # Get result
@@ -33,7 +33,7 @@ def task5(title_akas_path="resources/title.akas.tsv.gz",
     return df
 
 
-def load_akas(path, limit):
+def load_title_akas(path, limit):
     df = load(path, schema=title_akas_schema, limit=limit)
     df = clean_title_akas(df)
     # df.printSchema()
