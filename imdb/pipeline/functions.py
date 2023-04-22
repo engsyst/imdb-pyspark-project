@@ -54,3 +54,11 @@ def clean_title_episode(df: DataFrame):
                                  lambda cl: f.when(f.col(cl) == "\\N", None)
                                  .otherwise(f.col(cl)))
     return df
+
+
+def clean_title_ratings(df: DataFrame):
+    # Apply correct schema
+    df = apply_with_columns_func(df, df.columns,
+                                 lambda cl: f.when(f.col(cl) == "\\N", None)
+                                 .otherwise(f.col(cl)))
+    return df

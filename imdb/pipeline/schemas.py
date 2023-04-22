@@ -51,3 +51,9 @@ title_episode_schema = t.StructType([
     t.StructField("seasonNumber", t.IntegerType(), nullable=True),
     t.StructField("episodeNumber", t.IntegerType(), nullable=True),
 ])
+
+title_ratings_schema = t.StructType([
+    t.StructField("tconst", t.StringType(), nullable=True),
+    t.StructField("parentTconst", t.DoubleType(), nullable=True),
+    t.StructField("numVotes", t.IntegerType(), nullable=True),
+])
