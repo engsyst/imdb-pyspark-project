@@ -11,7 +11,7 @@ from imdb.pipeline.functions import load_title_basics, \
 
 def task6(title_basics_path="resources/title.basics.tsv.gz",
           title_episode_path="resources/title.episode.tsv.gz",
-          limit=None):
+          limit=None, top=50):
     basics_df = load_title_basics(title_basics_path, limit)
     episode_df = load_title_episode(title_episode_path, limit)
     grouped_episode_df = episode_df.groupBy(c.te_parentTconst).count().orderBy(f.desc("count"))
@@ -20,8 +20,8 @@ def task6(title_basics_path="resources/title.basics.tsv.gz",
           .join(basics_df.filter(f.col(c.tb_titleType) == "tvSeries"),
                 f.col(c.te_parentTconst) == f.col(c.tb_tconst))
           .orderBy(f.desc("count"), c.tb_originalTitle)
-          )
-    df.show()
+          ).limit(top)
+    df.show(top + 10)
     save(df, "task6")
     return df
 
