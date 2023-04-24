@@ -2,16 +2,16 @@
 import pyspark.sql.functions as f
 
 import imdb.pipeline.columns as c
-from imdb.ioutil import load
-from imdb.pipeline.functions import clean_title_basics
+from imdb.ioutil import save
+from imdb.pipeline.functions import load_title_basics
 
 
 def task3(path="resources/title.basics.tsv.gz", limit=None):
-    df = load(path, limit=limit)  # , schema=names_schema)
-    df = clean_title_basics(df)
+    df = load_title_basics(path, limit=limit)  # )
 
     # Get result
     df = df.filter(f.col(c.tb_runtimeMinutes) >= 120)
+    save(df, "task3")
     return df
 
 

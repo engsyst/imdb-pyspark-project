@@ -5,49 +5,59 @@ import pyspark.sql.functions as f
 from pyspark.sql import Window
 
 import imdb.pipeline.columns as c
-from imdb.ioutil import load
-from imdb.pipeline.functions import clean_title_akas, clean_title_basics
-from imdb.pipeline.schemas import title_akas_schema, title_basics_schema
+from imdb.ioutil import save
+from imdb.pipeline.functions import load_title_akas, load_title_basics, prepare_less_data_task5, load_title_ratings
 
+TOP_N = "top_n"
 
-# title.basics.tsv.gz
-# title.akas.tsv.gz
-# title.principals.tsv.gz
-# name.basics.tsv.gz
 
 def task5(title_akas_path="resources/title.akas.tsv.gz",
-          title_bacis_path="resources/title.basics.tsv.gz", limit=None):
+          title_basics_path="resources/title.basics.tsv.gz",
+          title_ratings_path="resources/title.ratings.tsv.gz",
+          top=100, limit=None):
     akas_df = load_title_akas(title_akas_path, limit)
-    titles_df = load_title_basics(title_bacis_path, limit)
+    titles_df = load_title_basics(title_basics_path, limit)
+    ratings_df = load_title_ratings(title_ratings_path, limit)
 
     # Get result
-    window = Window.partitionBy(c.ta_region)  # .orderBy(f.desc(c.adult_per_region))
+    titles_df = titles_df.filter((f.col(c.tb_isAdult) == 1) & f.col(c.tb_titleType).isNotNull())
     akas_df = akas_df.filter(f.col(c.ta_region).isNotNull())
-    titles_df = titles_df.filter(f.col(c.tb_isAdult) == 1)
-    df = akas_df.join(titles_df, f.col(c.tb_tconst) == f.col(c.ta_titleId)) \
-        .filter(f.col(c.ta_region).isNotNull()) \
-        .withColumn(c.adult_per_region, f.count(f.col(c.ta_region)).over(window)) \
-        .orderBy(f.desc(c.adult_per_region))
-    df.explain()
-    df.show(100)
-    return df
+    r_window = (Window.partitionBy(c.ta_region).orderBy(c.ta_region))
+    t_window = (Window.partitionBy(c.ta_region, c.tb_titleType).orderBy(c.ta_region, c.tb_titleType))
+    df = akas_df.join(titles_df, f.col(c.tb_tconst) == f.col(c.ta_titleId))
+    df = df.withColumn(c.adult_per_region, f.count(f.col(c.tb_tconst)).over(r_window))
+    df = df.withColumn(c.adult_per_title_type, f.count(f.col(c.tb_tconst)).over(t_window))
+    # it does not support order by future fields
+    df = df.orderBy(f.desc(c.adult_per_region), f.desc(c.adult_per_title_type))
+    df = df.join(ratings_df, c.tb_tconst)
 
-
-def load_title_akas(path, limit):
-    df = load(path, schema=title_akas_schema, limit=limit)
-    df = clean_title_akas(df)
-    # df.printSchema()
-    # df.show(truncate=False)
-    return df
-
-
-def load_title_basics(path, limit):
-    df = load(path, schema=title_basics_schema, limit=limit)  # , schema=names_schema)
-    df = clean_title_basics(df)
-    # df.printSchema()
-    # df.show(truncate=False)
+    window = (Window.partitionBy(c.ta_region, c.tb_titleType)
+              .orderBy(f.desc(c.adult_per_region), f.desc(c.adult_per_title_type), f.desc(c.tr_averageRating)))
+    df = df.withColumn(TOP_N, f.row_number().over(window))
+    df = df.orderBy(f.desc(c.adult_per_region), f.desc(c.adult_per_title_type), f.desc(c.tr_averageRating))
+    df = df.where(f.col(TOP_N) <= top)
+    # df.explain()
+    # df.show(150)
+    save(df, "task5")
     return df
 
 
 if __name__ == "__main__":
-    task5()  # .show()
+    # prepare_less_data_task5()
+    task5(top=100)  # .show()
+
+# Region1 countInR1 video countOfVideo titleV1
+# ...
+# Region1 countInR1 video countOfVideo titleV100
+# ...
+# Region1 countInR1 series countOfSeries titleS1
+# ...
+# Region1 countInR1 series countOfSeries titleS100
+# ...
+# Region2 countInR2 video countOfVideo titleV1
+# ...
+# Region2 countInR2 video countOfVideo titleV100
+# ...
+# Region2 countInR2 series countOfSeries titleV1
+# ...
+# Region2 countInR2 series countOfSeries titleV100
