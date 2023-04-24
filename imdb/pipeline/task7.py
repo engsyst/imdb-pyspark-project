@@ -16,6 +16,7 @@ def task7(title_basics_path="resources/title.basics.tsv.gz",
           title_ratings_path="resources/title.ratings.tsv.gz",
           limit=None):
     basics_df = load_title_basics(title_basics_path, limit)
+    basics_df = basics_df.filter(f.col(c.tb_startYear).isNotNull())
     ratings_df = load_title_ratings(title_ratings_path, limit)
     df = basics_df.join(ratings_df.select(c.tr_tconst, c.tr_averageRating), c.tb_tconst)
     df = df.withColumn(DECADE, f.floor(f.col(c.tb_startYear) / PERIOD).cast(t.IntegerType()))
@@ -27,4 +28,4 @@ def task7(title_basics_path="resources/title.basics.tsv.gz",
 
 
 if __name__ == "__main__":
-    task7(limit=1000)  # .show()
+    task7()  # .show()
