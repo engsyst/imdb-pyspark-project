@@ -3,37 +3,21 @@ from imdb.pipeline.task1 import task1
 from imdb.pipeline.task2 import task2
 from imdb.pipeline.task3 import task3
 from imdb.pipeline.task4 import task4
+from imdb.pipeline.task5 import task5
+from imdb.pipeline.task6 import task6
+from imdb.pipeline.task7 import task7
+from imdb.pipeline.task8 import task8
 
 
 def main():
-    task1().show()
-    task2().show()
-    task3().show()
-    task4().show()
-
-
-def show_all():
-    path = "resources/name.basics.tsv.gz"
-    print(path)
-    load(path).show(1, truncate=False)
-    path = "resources/title.akas.tsv.gz"
-    print(path)
-    load(path).show(1, truncate=False)
-    path = "resources/title.basics.tsv.gz"
-    print(path)
-    load(path).show(1, truncate=False)
-    path = "resources/title.crew.tsv.gz"
-    print(path)
-    load(path).show(1, truncate=False)
-    path = "resources/title.episode.tsv.gz"
-    print(path)
-    load(path).show(1, truncate=False)
-    path = "resources/title.principals.tsv.gz"
-    print(path)
-    load(path).show(1, truncate=False)
-    path = "resources/title.ratings.tsv.gz"
-    print(path)
-    load(path).show(1, truncate=False)
+    task1()
+    task2()
+    task3()
+    task4()
+    task5()
+    task6()
+    task7()
+    task8()
 
 
 if __name__ == '__main__':

@@ -6,11 +6,10 @@ import pyspark.sql.functions as f
 from pyspark.sql import Window
 
 import imdb.pipeline.columns as c
+from imdb.ioutil import save
 from imdb.pipeline.functions import load_title_ratings, load_title_basics
 
 TOP_TEN = "top_ten"
-DECADE = "decade"
-PERIOD = 10
 
 
 def task8(title_basics_path="resources/title.basics.tsv.gz",
@@ -27,8 +26,9 @@ def task8(title_basics_path="resources/title.basics.tsv.gz",
               )
     df = df.withColumn(TOP_TEN, f.row_number().over(window)).where(f.col(TOP_TEN) <= 10)
     df.show(150)
+    save(df, "task8")
     return df
 
 
 if __name__ == "__main__":
-    task8(limit=10000)  # .show()
+    task8()  # .show()
